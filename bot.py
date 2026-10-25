@@ -6,7 +6,7 @@ import yt_dlp
 TOKEN = '8678364203:AAGjYz1anxA47r1pmiW_7IsBL6a8RGm4u2c'
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("أهلاً بك! أرسل لي أي رابط من (إكس، إنستغرام، أو تيك توك) وسأقوم بتحميل الفيديو أو الصور فوراً وبدون حدود أو إعلانات.")
+    await update.message.reply_text("أهلاً بك! البوت يعمل الآن بكامل طاقته. أرسل أي رابط من إكس، إنستغرام، أو تيك توك وسأقوم بتحميله فوراً.")
 
 async def download_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
     url = update.message.text
@@ -15,7 +15,7 @@ async def download_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not url or not url.startswith('http'):
         return
 
-    msg = await update.message.reply_text("⏳ جاري تحليل الرابط وتحميل المحتوى...")
+    msg = await update.message.reply_text("⏳ جاري تحليل الرابط والتحميل...")
 
     downloaded_files = []
     
@@ -36,10 +36,10 @@ async def download_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     downloaded_files.append(filename)
 
         if not downloaded_files:
-            await msg.edit_text("❌ لم يتم العثور على محتوى قابل للتحميل.")
+            await msg.edit_text("❌ لم يتم العثور على محتوى قابل للتحميل. تأكد أن الحساب ليس خاصاً.")
             return
 
-        await msg.edit_text("📤 جاري إرسال المحتوى إلى تلغرام...")
+        await msg.edit_text("📤 جاري إرسال المحتوى...")
 
         photos = []
         for file_path in downloaded_files:
@@ -63,7 +63,8 @@ async def download_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await msg.delete()
 
     except Exception as e:
-        await msg.edit_text("❌ حدث خطأ أثناء التحميل. تأكد من صحة الرابط وأن الحساب عام وليس خاصاً.")
+        print(f"Error: {e}")
+        await msg.edit_text("❌ حدث خطأ أثناء التحميل من المنصة. قد تكون المنصة تحظر مؤقتاً أو الرابط بحاجة لتحديث.")
         
     finally:
         for file_path in downloaded_files:
@@ -77,4 +78,5 @@ if __name__ == '__main__':
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, download_media))
+    print("Bot is up and running...")
     app.run_polling()
